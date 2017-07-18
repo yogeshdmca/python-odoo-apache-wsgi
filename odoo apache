@@ -1,0 +1,120 @@
+#wsgi script  upto odoo V-9 
+
+import sys
+import os 
+
+
+sys.path.append("/opt/odoo")
+
+import openerp
+
+openerp.multi_process = True
+openerp.conf.server_wide_modules = ['web']
+
+conf = openerp.tools.config
+
+conf['log_level'] = 40
+
+conf['addons_path'] = '/opt/odoo/addons,/opt/odoo/custom_addons'
+
+conf['static_http_document_root'] = '/opt/odoo/odoo-bin'
+
+conf['db_name'] = 'odoo'
+
+
+conf['db_host'] = 'localhost'
+
+conf['db_user'] = 'odoo'
+
+conf['db_port'] = 5432
+
+conf['db_password'] = 'odoo'
+
+conf['admin_passwd'] = 'odoo'
+
+application = openerp.service.wsgi_server.application
+
+openerp.service.server.load_server_wide_modules()
+
+bind = '127.0.0.1:8069'
+
+pidfile = '.gunicorn.pid'
+
+workers = 5
+
+threads = 5
+
+timeout = 120
+
+max_requests = 1000
+
+proxy_mode = True
+
+
+
+
+VirtualHost *:80>
+
+    ServerName 172.104.43.240
+    ServerAlias localhost
+    WSGIScriptAlias / /opt/odoo/odoo-wsgi.py
+    WSGIDaemonProcess oe user=odoo group=odoo processes=2 python-path=/opt/odoo/ display-name=apache-openerp
+    WSGIProcessGroup oe
+    ErrorLog /var/log/odoo/odoo-error.log
+    CustomLog /var/log/odoo/odoo-access.log combined
+    <Directory /opt/odoo>
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+
+
+
+
+
+
+#wsgi script for V-10 
+
+import odoo
+
+odoo.multi_process = True 
+odoo.conf.server_wide_modules = ['web']
+
+conf = odoo.tools.config
+
+conf['log_level'] = 40
+
+conf['addons_path'] = '/opt/odoo/addons,/opt/odoo/custom_addons'
+
+conf['static_http_document_root'] = '/opt/odoo/odoo-bin'
+
+conf['db_name'] = 'odoo'
+
+
+conf['db_host'] = 'localhost'
+
+conf['db_user'] = 'odoo'
+
+conf['db_port'] = 5432
+
+conf['db_password'] = 'odoo'
+
+conf['admin_passwd'] = 'odoo'
+
+application = odoo.service.wsgi_server.application
+
+odoo.service.server.load_server_wide_modules()
+
+bind = '127.0.0.1:8069'
+
+pidfile = '.gunicorn.pid'
+
+workers = 5
+
+threads = 5
+
+timeout = 120
+
+max_requests = 1000
+
+proxy_mode = True
